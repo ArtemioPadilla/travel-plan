@@ -1,0 +1,11 @@
+{
+  "name": "europa-2025-travel-plan",
+  "version": "1.0.0",
+  "description": "Travel itinerary for Europa 2025",
+  "scripts": {
+    "generate-icons": "node generate-icons.js"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.2"
+  }
+}

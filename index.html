@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerario Europa 2025 - CDMX a Europa</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Guía interactiva completa para viaje por Europa: Ámsterdam, Lisboa, Madrid, Lyon, Chamonix y Bruselas">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Europa 2025">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://artemiopadilla.github.io/travel-plan/">
+    <meta property="og:title" content="Itinerario Europa 2025">
+    <meta property="og:description" content="19 días por Europa: Ámsterdam, Lisboa, Madrid, Lyon, Chamonix y Bruselas">
+    <meta property="og:image" content="https://artemiopadilla.github.io/travel-plan/icons/icon-512x512.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://artemiopadilla.github.io/travel-plan/">
+    <meta property="twitter:title" content="Itinerario Europa 2025">
+    <meta property="twitter:description" content="19 días por Europa: Ámsterdam, Lisboa, Madrid, Lyon, Chamonix y Bruselas">
+    <meta property="twitter:image" content="https://artemiopadilla.github.io/travel-plan/icons/icon-512x512.png">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="mobile.css" media="screen and (max-width: 768px)">
+    <link rel="stylesheet" href="print.css" media="print">
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="data.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader">
+            <div class="loader-circle"></div>
+            <p>Cargando tu aventura...</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Itinerario Europa - Septiembre 2025</h1>
+            <p>CDMX → Ámsterdam → Lisboa → Madrid → Lyon → Chamonix → Bruselas → CDMX</p>
+            <p class="dates">9 - 27 de Septiembre</p>
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="days">0</span>
+                    <span class="countdown-label">Días</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="hours">0</span>
+                    <span class="countdown-label">Horas</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="minutes">0</span>
+                    <span class="countdown-label">Min</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="seconds">0</span>
+                    <span class="countdown-label">Seg</span>
+                </div>
+            </div>
+            <button class="install-btn" id="installBtn" style="display:none;">📱 Instalar App</button>
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Cambiar tema">🌙</button>
+        </div>
+        
+        <div class="main-content">
+            <div id="map"></div>
+            
+            <div class="sidebar">
+                <!-- Búsqueda rápida -->
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Buscar actividad, lugar o ciudad...">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                
+                <!-- Botón menú móvil -->
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">☰ Menú</button>
+                
+                <div class="city-selector">
+                    <h3>📍 Ciudades</h3>
+                    <button class="city-btn active" onclick="showCity('all', event)">
+                        <span class="emoji">🌍</span>
+                        Ver Todo el Viaje<br>
+                        <small>19 días completos</small>
+                    </button>
+                    <button class="city-btn" onclick="showCity('amsterdam', event)">
+                        <span class="emoji">🇳🇱</span>
+                        Ámsterdam<br>
+                        <small>10-12 Sep • 3 noches</small>
+                    </button>
+                    <button class="city-btn" onclick="showCity('lisboa', event)">
+                        <span class="emoji">🇵🇹</span>
+                        Lisboa<br>
+                        <small>13-15 Sep • 3 noches</small>
+                    </button>
+                    <button class="city-btn" onclick="showCity('madrid', event)">
+                        <span class="emoji">🇪🇸</span>
+                        Madrid<br>
+                        <small>16-18 Sep • 3 noches</small>
+                    </button>
+                    <button class="city-btn" onclick="showCity('lyon', event)">
+                        <span class="emoji">🇫🇷</span>
+                        Lyon<br>
+                        <small>19-20 Sep • 2 noches</small>
+                    </button>
+                    <button class="city-btn" onclick="showCity('chamonix', event)">
+                        <span class="emoji">🏔️</span>
+                        Chamonix<br>
+                        <small>21-23 Sep • 3 noches</small>
+                    </button>
+                    <button class="city-btn" onclick="showCity('bruselas', event)">
+                        <span class="emoji">🇧🇪</span>
+                        Bruselas<br>
+                        <small>24-26 Sep • 3 noches</small>
+                    </button>
+                </div>
+                
+                <div class="legend">
+                    <h4>Leyenda</h4>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3498db;"></div>
+                        <span>✈️ Vuelo</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>🚌 Bus/FlixBus</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #2ecc71;"></div>
+                        <span>🚂 Tren</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f39c12;"></div>
+                        <span>🚶 Caminata</span>
+                    </div>
+                </div>
+
+                <div class="transport-info">
+                    <h4>🎫 Transportes</h4>
+                    <div class="transport-item">
+                        <span class="transport-date">9-10 Sep</span>
+                        <span class="transport-route">CDMX → AMS</span>
+                        <span class="transport-type">✈️ Internacional</span>
+                    </div>
+                    <div class="transport-item">
+                        <span class="transport-date">13 Sep</span>
+                        <span class="transport-route">AMS → LIS</span>
+                        <span class="transport-type">✈️ TAP TP671</span>
+                    </div>
+                    <div class="transport-item">
+                        <span class="transport-date">16 Sep</span>
+                        <span class="transport-route">LIS → MAD</span>
+                        <span class="transport-type">✈️ TAP TP1016</span>
+                    </div>
+                    <div class="transport-item">
+                        <span class="transport-date">19 Sep</span>
+                        <span class="transport-route">MAD → LYS</span>
+                        <span class="transport-type">✈️ EasyJet</span>
+                    </div>
+                    <div class="transport-item">
+                        <span class="transport-date">21 Sep</span>
+                        <span class="transport-route">Lyon → Chamonix</span>
+                        <span class="transport-type">🚌 FlixBus</span>
+                    </div>
+                    <div class="transport-item">
+                        <span class="transport-date">24 Sep</span>
+                        <span class="transport-route">Chamonix → GVA</span>
+                        <span class="transport-type">🚌 Swiss Tours</span>
+                    </div>
+                    <div class="transport-item">
+                        <span class="transport-date">24 Sep</span>
+                        <span class="transport-route">GVA → BRU</span>
+                        <span class="transport-type">✈️ SN2722</span>
+                    </div>
+                    <div class="transport-item">
+                        <span class="transport-date">27 Sep</span>
+                        <span class="transport-route">BRU → AMS</span>
+                        <span class="transport-type">🚌 FlixBus</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabs de contenido -->
+        <div class="content-tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab('timeline')">📅 Timeline</button>
+                <button class="tab-btn" onclick="switchTab('calendar')">📆 Calendario</button>
+                <button class="tab-btn" onclick="switchTab('gastronomy')">🍽️ Gastronomía</button>
+                <button class="tab-btn" onclick="switchTab('budget')">💰 Presupuesto</button>
+                <button class="tab-btn" onclick="switchTab('tips')">💡 Tips & Info</button>
+                <button class="tab-btn" onclick="switchTab('checklist')">✅ Checklist</button>
+            </div>
+            
+            <div class="tabs-content">
+                <!-- Tab Timeline -->
+                <div id="timeline-tab" class="tab-content active">
+                    <div class="route-details">
+                        <h3>📅 Itinerario Detallado</h3>
+                        <div class="timeline-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">🚶 Caminata del día:</span>
+                                <span class="stat-value" id="daily-walking">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">💰 Gasto estimado:</span>
+                                <span class="stat-value" id="daily-cost">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">⏱️ Actividades:</span>
+                                <span class="stat-value" id="daily-activities">-</span>
+                            </div>
+                        </div>
+                        <div class="timeline" id="timeline">
+                            <!-- El contenido del timeline se generará dinámicamente con JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab Calendario -->
+                <div id="calendar-tab" class="tab-content">
+                    <div class="calendar-container">
+                        <h3>📆 Vista Calendario - Septiembre 2025</h3>
+                        <div id="calendar-view" class="calendar-view">
+                            <!-- Calendar will be generated dynamically -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab Gastronomía -->
+                <div id="gastronomy-tab" class="tab-content">
+                    <div class="gastronomy-content">
+                        <h3>🍽️ Gastronomía por Ciudad</h3>
+                        <div id="food-grid" class="food-grid">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab Presupuesto -->
+                <div id="budget-tab" class="tab-content">
+                    <div class="budget-content">
+                        <h3>💰 Calculadora de Presupuesto</h3>
+                        <div class="budget-calculator">
+                            <div class="budget-section">
+                                <h4>Transporte Principal</h4>
+                                <div id="transport-costs"></div>
+                            </div>
+                            <div class="budget-section">
+                                <h4>Alojamiento (por noche)</h4>
+                                <input type="number" id="accommodation-cost" placeholder="€30-50" value="40">
+                                <span> × 17 noches = €<span id="accommodation-total">680</span></span>
+                            </div>
+                            <div class="budget-section">
+                                <h4>Comidas Diarias</h4>
+                                <div class="meal-inputs">
+                                    <label>Desayuno: €<input type="number" id="breakfast" value="7" min="0" max="50"></label>
+                                    <label>Almuerzo: €<input type="number" id="lunch" value="13" min="0" max="50"></label>
+                                    <label>Cena: €<input type="number" id="dinner" value="20" min="0" max="50"></label>
+                                </div>
+                                <div>Total diario: €<span id="daily-food">40</span> × 19 días = €<span id="food-total">760</span></div>
+                            </div>
+                            <div class="budget-section">
+                                <h4>Actividades y Entradas</h4>
+                                <div id="activities-costs"></div>
+                            </div>
+                            <div class="budget-total">
+                                <h4>TOTAL ESTIMADO</h4>
+                                <div class="total-amount">€<span id="grand-total">0</span></div>
+                                <small>Por persona, sin vuelos internacionales</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab Tips -->
+                <div id="tips-tab" class="tab-content">
+                    <div class="tips-content">
+                        <h3>💡 Tips & Información Práctica</h3>
+                        <div class="tips-grid" id="tips-grid">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab Checklist -->
+                <div id="checklist-tab" class="tab-content">
+                    <div class="checklist-content">
+                        <h3>✅ Checklist del Viaje</h3>
+                        <div class="checklist-sections">
+                            <div class="checklist-section">
+                                <h4>📄 Documentos</h4>
+                                <label><input type="checkbox"> Pasaporte vigente</label>
+                                <label><input type="checkbox"> Seguro de viaje</label>
+                                <label><input type="checkbox"> Copias de reservas</label>
+                                <label><input type="checkbox"> Tarjetas bancarias</label>
+                                <label><input type="checkbox"> Efectivo en euros</label>
+                            </div>
+                            <div class="checklist-section">
+                                <h4>✈️ Vuelos</h4>
+                                <label><input type="checkbox"> Check-in online 24h antes</label>
+                                <label><input type="checkbox"> Equipaje según aerolínea</label>
+                                <label><input type="checkbox"> Líquidos en bolsa transparente</label>
+                            </div>
+                            <div class="checklist-section">
+                                <h4>🏨 Alojamientos</h4>
+                                <label><input type="checkbox"> Confirmaciones impresas</label>
+                                <label><input type="checkbox"> Direcciones guardadas</label>
+                                <label><input type="checkbox"> Horarios de check-in</label>
+                            </div>
+                            <div class="checklist-section">
+                                <h4>🎒 Equipaje</h4>
+                                <label><input type="checkbox"> Adaptador universal</label>
+                                <label><input type="checkbox"> Cargadores</label>
+                                <label><input type="checkbox"> Medicamentos</label>
+                                <label><input type="checkbox"> Ropa para clima variado</label>
+                                <label><input type="checkbox"> Calzado cómodo para caminar</label>
+                            </div>
+                        </div>
+                        <button class="save-checklist-btn" onclick="saveChecklist()">💾 Guardar Progreso</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accommodation-info">
+            <h3>🏨 Alojamientos</h3>
+            <div class="accommodation-grid">
+                <div class="accommodation-card">
+                    <h4>🇳🇱 Ámsterdam</h4>
+                    <p class="accommodation-name"><a class="maps-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/Flying%20Pig%20Downtown%2C%20Amsterdam">Flying Pig Downtown</a></p>
+                    <p class="accommodation-detail">Cerca de Estación Central</p>
+                </div>
+                <div class="accommodation-card">
+                    <h4>🇵🇹 Lisboa</h4>
+                    <p class="accommodation-name"><a class="maps-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/Rua%20Cec%C3%ADlio%20de%20Sousa%2081%2C%201200-100%20Lisboa">Rua Cecílio de Sousa 81</a></p>
+                    <p class="accommodation-detail">1200-100 Lisboa</p>
+                </div>
+                <div class="accommodation-card">
+                    <h4>🇪🇸 Madrid</h4>
+                    <p class="accommodation-name"><a class="maps-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/Calle%20del%20Duque%20de%20Rivas%208%2C%2028012%20Madrid">Calle del Duque de Rivas 8</a></p>
+                    <p class="accommodation-detail">28012 Madrid</p>
+                </div>
+                <div class="accommodation-card">
+                    <h4>🇫🇷 Lyon</h4>
+                    <p class="accommodation-name"><a class="maps-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/54%20Rue%20Racine%2C%20Villeurbanne">54 Rue Racine</a></p>
+                    <p class="accommodation-detail">Villeurbanne</p>
+                </div>
+                <div class="accommodation-card">
+                    <h4>🏔️ Chamonix</h4>
+                    <p class="accommodation-name"><a class="maps-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/238%20Rue%20Helbronner%2C%2074400%20Chamonix">238 Rue Helbronner</a></p>
+                    <p class="accommodation-detail">74400 Chamonix</p>
+                </div>
+                <div class="accommodation-card">
+                    <h4>🇧🇪 Bruselas</h4>
+                    <p class="accommodation-name"><a class="maps-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/Rue%20des%20Quatre%20Fils%20Aymon%207%2C%201000%20Bruselas">Rue des Quatre Fils Aymon 7</a></p>
+                    <p class="accommodation-detail">1000 Bruselas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    
+    <!-- Registro del Service Worker -->
+    <script>
+        // Temporalmente desactivado para debugging
+        /*
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+        */
+        
+        // Desregistrar service workers existentes para debugging
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                    console.log('Service Worker desregistrado para debugging');
+                }
+            });
+        }
+        
+        // Manejo de instalación PWA
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block';
+        });
+        
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User ${outcome} the installation`);
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+        
+        // Contador regresivo
+        function updateCountdown() {
+            const tripDate = new Date('2025-09-09T00:00:00');
+            const now = new Date();
+            const diff = tripDate - now;
+            
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                document.getElementById('days').textContent = days;
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            } else {
+                document.getElementById('countdown').innerHTML = '<p>¡El viaje ha comenzado! 🎉</p>';
+            }
+        }
+        
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>

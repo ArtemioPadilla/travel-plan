@@ -1,0 +1,519 @@
+/* Estilos específicos para móviles */
+@media screen and (max-width: 768px) {
+    /* Reset padding y márgenes generales */
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    .container {
+        padding: 10px;
+        max-width: 100%;
+    }
+
+    /* Header responsive */
+    .header {
+        padding: 20px 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.5em;
+        margin-bottom: 8px;
+    }
+
+    .header p {
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+
+    /* Contador regresivo móvil */
+    .countdown {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 15px 0;
+        flex-wrap: wrap;
+    }
+
+    .countdown-item {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 8px 12px;
+        border-radius: 8px;
+        text-align: center;
+        min-width: 60px;
+    }
+
+    .countdown-value {
+        display: block;
+        font-size: 1.3em;
+        font-weight: bold;
+        color: white;
+    }
+
+    .countdown-label {
+        font-size: 0.7em;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Botón instalar PWA */
+    .install-btn {
+        margin: 10px auto;
+        padding: 10px 20px;
+        background: white;
+        color: #667eea;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        display: block;
+    }
+
+    /* Layout principal móvil */
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Mapa móvil */
+    #map {
+        height: 350px;
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+
+    /* Sidebar móvil */
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+    }
+
+    /* Búsqueda móvil */
+    .search-box {
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    #searchInput {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px; /* Previene zoom en iOS */
+    }
+
+    .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    /* Menú móvil */
+    .mobile-menu-btn {
+        display: block !important;
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1em;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    /* Selector de ciudades móvil */
+    .city-selector {
+        background: white;
+        border-radius: 10px;
+        padding: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        opacity: 0;
+    }
+
+    .city-selector.active {
+        max-height: 600px;
+        overflow-y: auto;
+        padding: 15px;
+        opacity: 1;
+    }
+
+    .city-selector h3 {
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+
+    .city-btn {
+        padding: 10px;
+        margin-bottom: 6px;
+        font-size: 0.9em;
+    }
+
+    .city-btn .emoji {
+        font-size: 1.2em;
+    }
+
+    .city-btn small {
+        font-size: 0.75em;
+        margin-left: 35px;
+    }
+
+    /* Tabs móvil */
+    .content-tabs {
+        margin-top: 15px;
+        border-radius: 10px;
+    }
+
+    .tabs-header {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 8px 5px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .tabs-header::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .tab-btn {
+        flex: 0 0 auto;
+        padding: 10px 15px;
+        font-size: 0.85em;
+        min-width: 100px;
+    }
+
+    .tab-content {
+        padding: 20px 15px;
+    }
+
+    /* Timeline móvil */
+    .route-details {
+        padding: 20px 15px;
+    }
+
+    .route-details h3 {
+        font-size: 1.3em;
+    }
+
+    .timeline-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px;
+        background: white;
+        border-radius: 6px;
+    }
+
+    .timeline {
+        padding-left: 30px;
+        max-height: 400px;
+    }
+
+    .timeline-item {
+        padding-bottom: 20px;
+    }
+
+    .timeline-item::before {
+        left: -25px;
+        width: 10px;
+        height: 10px;
+    }
+
+    .timeline-time {
+        font-size: 0.85em;
+    }
+
+    .timeline-title {
+        font-size: 0.95em;
+    }
+
+    .timeline-description {
+        font-size: 0.85em;
+        padding: 8px;
+    }
+
+    /* Gastronomía móvil */
+    .food-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .food-card {
+        padding: 15px;
+    }
+
+    .food-item {
+        font-size: 0.8em;
+        padding: 6px 10px;
+        margin: 3px;
+    }
+
+    .restaurant-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    /* Presupuesto móvil */
+    .budget-calculator {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .budget-section {
+        padding: 15px;
+    }
+
+    .budget-total {
+        grid-column: span 1;
+        padding: 20px;
+    }
+
+    .total-amount {
+        font-size: 2em;
+    }
+
+    .meal-inputs label {
+        font-size: 0.9em;
+    }
+
+    /* Tips móvil */
+    .tips-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .tip-card {
+        padding: 15px;
+    }
+
+    .tip-card h4 {
+        font-size: 1em;
+    }
+
+    .tip-content {
+        font-size: 0.85em;
+    }
+
+    /* Checklist móvil */
+    .checklist-sections {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .checklist-section {
+        padding: 15px;
+    }
+
+    .checklist-section h4 {
+        font-size: 1em;
+    }
+
+    .checklist-section label {
+        font-size: 0.9em;
+        padding: 6px 0;
+    }
+
+    .save-checklist-btn {
+        padding: 12px 30px;
+        font-size: 1em;
+    }
+
+    /* Alojamientos móvil */
+    .accommodation-info {
+        padding: 20px 15px;
+        margin-top: 15px;
+    }
+
+    .accommodation-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .accommodation-card {
+        padding: 15px;
+    }
+
+    .accommodation-card h4 {
+        font-size: 1em;
+    }
+
+    /* Legend y transport info móvil */
+    .legend,
+    .transport-info {
+        padding: 15px;
+    }
+
+    .legend h4,
+    .transport-info h4 {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+
+    .legend-item {
+        padding: 6px;
+        font-size: 0.9em;
+    }
+
+    .transport-item {
+        padding: 8px;
+        font-size: 0.85em;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .transport-type {
+        grid-column: span 2;
+        margin-top: 4px;
+    }
+
+    /* Scrollbar personalizada móvil */
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+
+    /* Ajustes de fuente general */
+    body {
+        font-size: 14px;
+    }
+
+    /* Ocultar elementos no esenciales en móvil */
+    .desktop-only {
+        display: none !important;
+    }
+
+    /* Botones táctiles más grandes */
+    button,
+    .btn,
+    input[type="checkbox"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Mejorar espacio entre elementos táctiles */
+    button + button,
+    label + label {
+        margin-top: 8px;
+    }
+}
+
+/* Landscape móvil */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    #map {
+        height: 250px;
+    }
+
+    .header {
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 1.3em;
+    }
+
+    .countdown {
+        margin: 10px 0;
+    }
+
+    .timeline {
+        max-height: 300px;
+    }
+}
+
+/* Tablets */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .main-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    #map {
+        height: 450px;
+    }
+
+    .sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .city-selector {
+        grid-column: span 2;
+    }
+
+    .tabs-header {
+        justify-content: space-around;
+    }
+
+    .food-grid,
+    .tips-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .accommodation-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Modo oscuro móvil (opcional) */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+    body {
+        background: #1a1a2e;
+    }
+
+    .header,
+    .city-selector,
+    .tab-content,
+    .route-details,
+    .accommodation-info {
+        background: rgba(26, 26, 46, 0.95);
+        color: #f0f0f0;
+    }
+
+    .city-btn,
+    .tab-btn {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .city-btn.active,
+    .tab-btn.active {
+        background: rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+
+    #searchInput {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* Fix para notch del iPhone */
+@supports (padding-top: env(safe-area-inset-top)) {
+    .container {
+        padding-top: env(safe-area-inset-top);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}

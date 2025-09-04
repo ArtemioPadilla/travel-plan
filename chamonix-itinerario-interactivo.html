@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerario Chamonix - Mapa de Rutas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        #map {
+            height: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: white;
+        }
+        
+        .day-selector {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .day-selector h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .day-btn {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .day-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .day-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .legend {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .legend h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 4px;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        
+        .route-details {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            grid-column: span 2;
+        }
+        
+        .route-details h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #ddd;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 30px;
+            display: none;
+        }
+        
+        .timeline-item.active {
+            display: block;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .timeline-time {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-title {
+            color: #2c3e50;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+        
+        .transport-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .route-details {
+                grid-column: span 1;
+            }
+            
+            #map {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏔️ Itinerario Chamonix</h1>
+            <p>21-24 Septiembre 2025 - Rutas y Transportes</p>
+        </div>
+        
+        <div class="main-content">
+            <div id="map"></div>
+            
+            <div class="day-selector">
+                <h3>📅 Seleccionar Día</h3>
+                <button class="day-btn active" onclick="showDay(1)">
+                    Día 1 - Llegada<br>
+                    <small>Lyon → Chamonix</small>
+                </button>
+                <button class="day-btn" onclick="showDay(2)">
+                    Día 2 - MultiPass 1<br>
+                    <small>Aiguille du Midi & Mer de Glace</small>
+                </button>
+                <button class="day-btn" onclick="showDay(3)">
+                    Día 3 - MultiPass 2<br>
+                    <small>Mont-Blanc & Brévent</small>
+                </button>
+                <button class="day-btn" onclick="showDay(4)">
+                    Día 4 - Salida<br>
+                    <small>Chamonix → Ginebra</small>
+                </button>
+                <button class="day-btn" onclick="showAll()">
+                    Ver Todo el Viaje<br>
+                    <small>4 días completos</small>
+                </button>
+                
+                <div class="legend">
+                    <h4>Leyenda</h4>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #FF6B6B;"></div>
+                        <span>🚌 Bus/FlixBus</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4ECDC4;"></div>
+                        <span>🚡 Teleférico</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #45B7D1;"></div>
+                        <span>🚂 Tren</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #96CEB4;"></div>
+                        <span>🚞 Tren Cremallera</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #DDA15E;"></div>
+                        <span>🚶 Caminata</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="route-details">
+            <h3>📍 Detalles de la Ruta</h3>
+            <div class="timeline" id="timeline">
+                <!-- Día 1 -->
+                <div class="timeline-item day-1 active">
+                    <div class="timeline-time">12:20</div>
+                    <div class="timeline-title">Lyon - Salida <span class="transport-badge">FlixBus</span></div>
+                    <div class="timeline-description">Estación de buses de Lyon - Duración: 3h 30min</div>
+                </div>
+                <div class="timeline-item day-1 active">
+                    <div class="timeline-time">15:50</div>
+                    <div class="timeline-title">Chamonix Sud - Llegada</div>
+                    <div class="timeline-description">Check-in en Airbnb (238 Rue Helbronner)</div>
+                </div>
+                <div class="timeline-item day-1 active">
+                    <div class="timeline-time">17:00</div>
+                    <div class="timeline-title">Recoger MultiPass <span class="transport-badge">A pie</span></div>
+                    <div class="timeline-description">Estación Aiguille du Midi o Oficina de Turismo</div>
+                </div>
+                <div class="timeline-item day-1 active">
+                    <div class="timeline-time">17:30-19:00</div>
+                    <div class="timeline-title">Centro de Chamonix</div>
+                    <div class="timeline-description">Exploración del centro histórico - 2-3 km de caminata</div>
+                </div>
+                
+                <!-- Día 2 -->
+                <div class="timeline-item day-2">
+                    <div class="timeline-time">08:00</div>
+                    <div class="timeline-title">Aiguille du Midi <span class="transport-badge">Teleférico</span></div>
+                    <div class="timeline-description">Subida a 3,842m - Paso al Vacío y vistas 360°</div>
+                </div>
+                <div class="timeline-item day-2">
+                    <div class="timeline-time">12:00</div>
+                    <div class="timeline-title">Almuerzo en Chamonix</div>
+                    <div class="timeline-description">Descanso en el centro - Le Bistrot o Joséphine</div>
+                </div>
+                <div class="timeline-item day-2">
+                    <div class="timeline-time">14:00</div>
+                    <div class="timeline-title">Montenvers <span class="transport-badge">Tren Cremallera</span></div>
+                    <div class="timeline-description">Mer de Glace - Glaciar más grande de Francia</div>
+                </div>
+                <div class="timeline-item day-2">
+                    <div class="timeline-time">17:30</div>
+                    <div class="timeline-title">Regreso al centro</div>
+                    <div class="timeline-description">Descanso y cena - La Calèche o L'Atmosphère</div>
+                </div>
+                
+                <!-- Día 3 -->
+                <div class="timeline-item day-3">
+                    <div class="timeline-time">09:21</div>
+                    <div class="timeline-title">Tren a Le Fayet <span class="transport-badge">Mont-Blanc Express</span></div>
+                    <div class="timeline-description">30 minutos de viaje en tren</div>
+                </div>
+                <div class="timeline-item day-3">
+                    <div class="timeline-time">11:00</div>
+                    <div class="timeline-title">Tramway du Mont-Blanc <span class="transport-badge">Tren Cremallera</span></div>
+                    <div class="timeline-description">Subida a Nid d'Aigle (2,372m) - Vista glaciar Bionnassay</div>
+                </div>
+                <div class="timeline-item day-3">
+                    <div class="timeline-time">14:21</div>
+                    <div class="timeline-title">Regreso a Chamonix <span class="transport-badge">Tren</span></div>
+                    <div class="timeline-description">Vuelta al centro de Chamonix</div>
+                </div>
+                <div class="timeline-item day-3">
+                    <div class="timeline-time">16:30</div>
+                    <div class="timeline-title">Le Brévent <span class="transport-badge">Teleférico</span></div>
+                    <div class="timeline-description">Mejor vista frontal del Mont Blanc - 2,525m</div>
+                </div>
+                <div class="timeline-item day-3">
+                    <div class="timeline-time">18:00</div>
+                    <div class="timeline-title">La Flégère <span class="transport-badge">Teleférico</span></div>
+                    <div class="timeline-description">Conexión desde Planpraz - Luz dorada del atardecer</div>
+                </div>
+                <div class="timeline-item day-3">
+                    <div class="timeline-time">20:00</div>
+                    <div class="timeline-title">Cena de despedida</div>
+                    <div class="timeline-description">La Calèche - Fondue savoyard</div>
+                </div>
+                
+                <!-- Día 4 -->
+                <div class="timeline-item day-4">
+                    <div class="timeline-time">08:00</div>
+                    <div class="timeline-title">Bus a Ginebra <span class="transport-badge">SAT Bus</span></div>
+                    <div class="timeline-description">Salida desde Chamonix Sud - 1h 10min</div>
+                </div>
+                <div class="timeline-item day-4">
+                    <div class="timeline-time">09:30</div>
+                    <div class="timeline-title">Ginebra - Centro</div>
+                    <div class="timeline-description">Consigna en Estación Cornavin - CHF 10</div>
+                </div>
+                <div class="timeline-item day-4">
+                    <div class="timeline-time">10:00-12:00</div>
+                    <div class="timeline-title">Casco Antiguo <span class="transport-badge">A pie</span></div>
+                    <div class="timeline-description">Catedral St. Pierre, Plaza Bourg-de-Four - 2-3 km</div>
+                </div>
+                <div class="timeline-item day-4">
+                    <div class="timeline-time">12:15</div>
+                    <div class="timeline-title">Lago Léman <span class="transport-badge">A pie</span></div>
+                    <div class="timeline-description">Jet d'Eau, Jardin Anglais, Reloj de Flores</div>
+                </div>
+                <div class="timeline-item day-4">
+                    <div class="timeline-time">13:45</div>
+                    <div class="timeline-title">Aeropuerto de Ginebra <span class="transport-badge">Tren</span></div>
+                    <div class="timeline-description">7 minutos desde Cornavin - CHF 3</div>
+                </div>
+                <div class="timeline-item day-4">
+                    <div class="timeline-time">17:10</div>
+                    <div class="timeline-title">Vuelo GVA → BRU</div>
+                    <div class="timeline-description">SN2722 - Duración: 1h 20min</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar el mapa
+        var map = L.map('map').setView([45.9237, 6.8694], 11);
+        
+        // Agregar capa de mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Definir iconos personalizados
+        var icons = {
+            bus: L.divIcon({
+                html: '<div style="background: #FF6B6B; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🚌</div>',
+                iconSize: [30, 30],
+                className: 'custom-div-icon'
+            }),
+            cable: L.divIcon({
+                html: '<div style="background: #4ECDC4; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🚡</div>',
+                iconSize: [30, 30],
+                className: 'custom-div-icon'
+            }),
+            train: L.divIcon({
+                html: '<div style="background: #45B7D1; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🚂</div>',
+                iconSize: [30, 30],
+                className: 'custom-div-icon'
+            }),
+            cog: L.divIcon({
+                html: '<div style="background: #96CEB4; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🚞</div>',
+                iconSize: [30, 30],
+                className: 'custom-div-icon'
+            }),
+            walk: L.divIcon({
+                html: '<div style="background: #DDA15E; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🚶</div>',
+                iconSize: [30, 30],
+                className: 'custom-div-icon'
+            }),
+            place: L.divIcon({
+                html: '<div style="background: #667eea; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">📍</div>',
+                iconSize: [30, 30],
+                className: 'custom-div-icon'
+            })
+        };
+        
+        // Puntos de interés con coordenadas reales
+        var locations = {
+            // Día 1
+            lyon: [45.7640, 4.8357],
+            chamonixSud: [45.9190, 6.8705],
+            airbnb: [45.9242, 6.8736],
+            centreChamonix: [45.9237, 6.8694],
+            
+            // Día 2
+            aiguilleStation: [45.9237, 6.8873],
+            aiguilleSommet: [45.8786, 6.8873],
+            montenversStation: [45.9273, 6.8725],
+            merDeGlace: [45.9297, 6.9245],
+            
+            // Día 3
+            leFayet: [45.9096, 6.7014],
+            tramwayStation: [45.9045, 6.7056],
+            nidAigle: [45.8533, 6.7851],
+            breventStation: [45.9334, 6.8493],
+            breventSommet: [45.9362, 6.8265],
+            planpraz: [45.9365, 6.8379],
+            flegereStation: [45.9585, 6.8874],
+            
+            // Día 4
+            geneveCenter: [46.2044, 6.1432],
+            lacLeman: [46.2074, 6.1559],
+            geneveAirport: [46.2381, 6.1089]
+        };
+        
+        // Grupos de capas para cada día
+        var dayLayers = {
+            day1: L.layerGroup(),
+            day2: L.layerGroup(),
+            day3: L.layerGroup(),
+            day4: L.layerGroup()
+        };
+        
+        // Día 1 - Rutas y marcadores
+        // Ruta del FlixBus Lyon-Chamonix (siguiendo la A40 y N205)
+        var routeLyonChamonix = [
+            [45.7640, 4.8357], // Lyon
+            [45.9030, 5.1246], // Ambérieu
+            [45.9590, 5.3278], // Bellegarde
+            [46.0511, 5.8265], // Bonneville
+            [45.9838, 6.2357], // Cluses
+            [45.9600, 6.4713], // Sallanches
+            [45.9190, 6.8705]  // Chamonix Sud
+        ];
+        L.polyline(routeLyonChamonix, {color: '#FF6B6B', weight: 4, opacity: 0.8, dashArray: '10, 10'}).addTo(dayLayers.day1);
+        L.marker(locations.lyon, {icon: icons.bus}).bindPopup('<b>Lyon</b><br>Salida: 12:20<br>FlixBus').addTo(dayLayers.day1);
+        L.marker(locations.chamonixSud, {icon: icons.bus}).bindPopup('<b>Chamonix Sud</b><br>Llegada: 15:50').addTo(dayLayers.day1);
+        L.marker(locations.airbnb, {icon: icons.place}).bindPopup('<b>Airbnb</b><br>238 Rue Helbronner').addTo(dayLayers.day1);
+        
+        // Caminata centro
+        var walkCenter = [locations.airbnb, locations.centreChamonix, locations.aiguilleStation, locations.centreChamonix];
+        L.polyline(walkCenter, {color: '#DDA15E', weight: 3, opacity: 0.7}).addTo(dayLayers.day1);
+        
+        // Día 2 - Rutas y marcadores
+        // Teleférico Aiguille du Midi
+        var cableAiguille = [
+            locations.aiguilleStation,
+            [45.9050, 6.8873], // Plan de l'Aiguille
+            locations.aiguilleSommet
+        ];
+        L.polyline(cableAiguille, {color: '#4ECDC4', weight: 4, opacity: 0.8}).addTo(dayLayers.day2);
+        L.marker(locations.aiguilleStation, {icon: icons.cable}).bindPopup('<b>Estación Aiguille du Midi</b><br>08:00 - Salida').addTo(dayLayers.day2);
+        L.marker(locations.aiguilleSommet, {icon: icons.cable}).bindPopup('<b>Aiguille du Midi</b><br>3,842m - Paso al Vacío').addTo(dayLayers.day2);
+        
+        // Tren cremallera Montenvers
+        var trainMontenvers = [
+            locations.montenversStation,
+            [45.9285, 6.8890],
+            [45.9297, 6.9080],
+            locations.merDeGlace
+        ];
+        L.polyline(trainMontenvers, {color: '#96CEB4', weight: 4, opacity: 0.8}).addTo(dayLayers.day2);
+        L.marker(locations.montenversStation, {icon: icons.cog}).bindPopup('<b>Estación Montenvers</b><br>14:00 - Tren cremallera').addTo(dayLayers.day2);
+        L.marker(locations.merDeGlace, {icon: icons.cog}).bindPopup('<b>Mer de Glace</b><br>Glaciar más grande de Francia').addTo(dayLayers.day2);
+        
+        // Día 3 - Rutas y marcadores
+        // Tren Chamonix-Le Fayet
+        var trainLeFayet = [
+            locations.centreChamonix,
+            [45.9150, 6.8300],
+            [45.9120, 6.7650],
+            locations.leFayet
+        ];
+        L.polyline(trainLeFayet, {color: '#45B7D1', weight: 4, opacity: 0.8}).addTo(dayLayers.day3);
+        L.marker(locations.leFayet, {icon: icons.train}).bindPopup('<b>Le Fayet</b><br>Estación de tren').addTo(dayLayers.day3);
+        
+        // Tramway du Mont-Blanc
+        var tramwayRoute = [
+            locations.tramwayStation,
+            [45.8890, 6.7200],
+            [45.8750, 6.7450],
+            [45.8650, 6.7650],
+            locations.nidAigle
+        ];
+        L.polyline(tramwayRoute, {color: '#96CEB4', weight: 4, opacity: 0.8}).addTo(dayLayers.day3);
+        L.marker(locations.tramwayStation, {icon: icons.cog}).bindPopup('<b>Tramway du Mont-Blanc</b><br>11:00 - Salida').addTo(dayLayers.day3);
+        L.marker(locations.nidAigle, {icon: icons.cog}).bindPopup('<b>Nid d\'Aigle</b><br>2,372m - Vista glaciar Bionnassay').addTo(dayLayers.day3);
+        
+        // Teleférico Brévent
+        var cableBrevent = [
+            locations.breventStation,
+            locations.planpraz,
+            locations.breventSommet
+        ];
+        L.polyline(cableBrevent, {color: '#4ECDC4', weight: 4, opacity: 0.8}).addTo(dayLayers.day3);
+        L.marker(locations.breventStation, {icon: icons.cable}).bindPopup('<b>Estación Brévent</b><br>16:30 - Teleférico').addTo(dayLayers.day3);
+        L.marker(locations.breventSommet, {icon: icons.cable}).bindPopup('<b>Le Brévent</b><br>2,525m - Mejor vista del Mont Blanc').addTo(dayLayers.day3);
+        
+        // Conexión Planpraz-Flégère
+        var connectionFlegere = [
+            locations.planpraz,
+            [45.9450, 6.8550],
+            [45.9520, 6.8700],
+            locations.flegereStation
+        ];
+        L.polyline(connectionFlegere, {color: '#4ECDC4', weight: 3, opacity: 0.7, dashArray: '5, 5'}).addTo(dayLayers.day3);
+        L.marker(locations.flegereStation, {icon: icons.cable}).bindPopup('<b>La Flégère</b><br>18:00 - Luz dorada del atardecer').addTo(dayLayers.day3);
+        
+        // Día 4 - Rutas y marcadores
+        // Bus Chamonix-Ginebra (siguiendo la Route Blanche/A40)
+        var routeChamonixGeneve = [
+            locations.chamonixSud,
+            [45.9300, 6.8200], // Argentière
+            [45.9580, 6.7100], // Vallorcine
+            [46.0830, 6.2580], // Martigny
+            [46.1500, 6.1800], // Frontera
+            locations.geneveCenter
+        ];
+        L.polyline(routeChamonixGeneve, {color: '#FF6B6B', weight: 4, opacity: 0.8, dashArray: '10, 10'}).addTo(dayLayers.day4);
+        L.marker(locations.chamonixSud, {icon: icons.bus}).bindPopup('<b>Chamonix Sud</b><br>08:00 - SAT Bus').addTo(dayLayers.day4);
+        L.marker(locations.geneveCenter, {icon: icons.place}).bindPopup('<b>Ginebra Centro</b><br>Place Dorcière - Estación Cornavin').addTo(dayLayers.day4);
+        
+        // Caminata Ginebra
+        var walkGeneve = [
+            locations.geneveCenter,
+            [46.2010, 6.1480], // Casco antiguo
+            [46.2005, 6.1460], // Catedral
+            locations.lacLeman
+        ];
+        L.polyline(walkGeneve, {color: '#DDA15E', weight: 3, opacity: 0.7}).addTo(dayLayers.day4);
+        L.marker(locations.lacLeman, {icon: icons.walk}).bindPopup('<b>Lago Léman</b><br>Jet d\'Eau - Jardin Anglais').addTo(dayLayers.day4);
+        
+        // Tren al aeropuerto
+        var trainAirport = [locations.geneveCenter, locations.geneveAirport];
+        L.polyline(trainAirport, {color: '#45B7D1', weight: 4, opacity: 0.8}).addTo(dayLayers.day4);
+        L.marker(locations.geneveAirport, {icon: icons.train}).bindPopup('<b>Aeropuerto de Ginebra</b><br>Vuelo 17:10 GVA → BRU').addTo(dayLayers.day4);
+        
+        // Agregar todas las capas al mapa inicialmente
+        dayLayers.day1.addTo(map);
+        
+        // Funciones para cambiar de día
+        function clearAllDays() {
+            map.removeLayer(dayLayers.day1);
+            map.removeLayer(dayLayers.day2);
+            map.removeLayer(dayLayers.day3);
+            map.removeLayer(dayLayers.day4);
+            
+            document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.timeline-item').forEach(item => item.classList.remove('active'));
+        }
+        
+        function showDay(day) {
+            clearAllDays();
+            document.querySelectorAll('.day-btn')[day-1].classList.add('active');
+            document.querySelectorAll('.day-' + day).forEach(item => item.classList.add('active'));
+            
+            switch(day) {
+                case 1:
+                    dayLayers.day1.addTo(map);
+                    map.fitBounds([[45.7640, 4.8357], [45.9242, 6.8736]]);
+                    break;
+                case 2:
+                    dayLayers.day2.addTo(map);
+                    map.setView([45.9237, 6.8694], 12);
+                    break;
+                case 3:
+                    dayLayers.day3.addTo(map);
+                    map.fitBounds([[45.8533, 6.7014], [45.9585, 6.8874]]);
+                    break;
+                case 4:
+                    dayLayers.day4.addTo(map);
+                    map.fitBounds([[45.9190, 6.1089], [46.2381, 6.8705]]);
+                    break;
+            }
+        }
+        
+        function showAll() {
+            clearAllDays();
+            dayLayers.day1.addTo(map);
+            dayLayers.day2.addTo(map);
+            dayLayers.day3.addTo(map);
+            dayLayers.day4.addTo(map);
+            
+            document.querySelectorAll('.day-btn')[4].classList.add('active');
+            document.querySelectorAll('.timeline-item').forEach(item => item.classList.add('active'));
+            
+            map.fitBounds([[45.7640, 4.8357], [46.2381, 6.9245]]);
+        }
+    </script>
+</body>
+</html>

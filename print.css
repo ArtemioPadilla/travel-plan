@@ -1,0 +1,318 @@
+/* Estilos para impresión */
+@media print {
+    /* Reset general */
+    * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    /* Ocultar elementos no necesarios en impresión */
+    .mobile-menu-btn,
+    .search-box,
+    .install-btn,
+    .print-btn,
+    .save-checklist-btn,
+    .tabs-header,
+    #map,
+    .countdown,
+    input[type="number"],
+    input[type="checkbox"] {
+        display: none !important;
+    }
+
+    /* Forzar colores de fondo */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+        line-height: 1.5;
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    /* Header para impresión */
+    .header {
+        background: white !important;
+        border: 2px solid #667eea !important;
+        padding: 20px !important;
+        margin-bottom: 20px !important;
+        page-break-after: avoid;
+    }
+
+    .header h1 {
+        color: #667eea !important;
+        font-size: 24pt;
+        margin-bottom: 10px;
+    }
+
+    .header p {
+        color: #333 !important;
+        font-size: 12pt;
+    }
+
+    /* Mostrar todos los tabs como secciones */
+    .tab-content {
+        display: block !important;
+        page-break-inside: avoid;
+        margin-bottom: 30px;
+        padding: 15px !important;
+        border: 1px solid #ddd;
+    }
+
+    .tab-content h3 {
+        color: #667eea !important;
+        font-size: 18pt;
+        margin-bottom: 15px;
+        page-break-after: avoid;
+    }
+
+    /* Timeline para impresión */
+    .timeline {
+        max-height: none !important;
+        padding-left: 20px !important;
+    }
+
+    .timeline-item {
+        page-break-inside: avoid;
+        margin-bottom: 15px;
+    }
+
+    .timeline-day {
+        background: #667eea !important;
+        color: white !important;
+        padding: 8px !important;
+        margin: 20px 0 10px 0;
+        font-size: 14pt;
+        page-break-after: avoid;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .timeline-time {
+        font-weight: bold;
+        color: #667eea !important;
+        font-size: 10pt;
+    }
+
+    .timeline-title {
+        font-size: 11pt;
+        margin-bottom: 5px;
+    }
+
+    .timeline-description {
+        font-size: 10pt;
+        color: #555 !important;
+        border-left: 2px solid #667eea !important;
+    }
+
+    /* Gastronomía para impresión */
+    .food-grid {
+        display: block !important;
+    }
+
+    .food-card {
+        page-break-inside: avoid;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        padding: 15px;
+    }
+
+    .food-card h4 {
+        color: #667eea !important;
+        font-size: 14pt;
+        margin-bottom: 10px;
+    }
+
+    .food-item {
+        display: inline-block;
+        background: #f0f0f0 !important;
+        padding: 4px 8px;
+        margin: 2px;
+        font-size: 9pt;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .restaurant-item {
+        border-bottom: 1px solid #ddd;
+        padding: 5px 0;
+    }
+
+    /* Presupuesto para impresión */
+    .budget-calculator {
+        display: block !important;
+    }
+
+    .budget-section {
+        page-break-inside: avoid;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    .budget-total {
+        background: #667eea !important;
+        color: white !important;
+        padding: 15px !important;
+        margin: 20px 0;
+        text-align: center;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .total-amount {
+        font-size: 20pt !important;
+    }
+
+    /* Tips para impresión */
+    .tips-grid {
+        display: block !important;
+    }
+
+    .tip-card {
+        page-break-inside: avoid;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    .tip-card h4 {
+        color: #667eea !important;
+        font-size: 12pt;
+        margin-bottom: 8px;
+    }
+
+    .tip-content {
+        font-size: 10pt;
+        line-height: 1.4;
+    }
+
+    /* Checklist para impresión */
+    .checklist-sections {
+        display: block !important;
+    }
+
+    .checklist-section {
+        page-break-inside: avoid;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    .checklist-section h4 {
+        color: #667eea !important;
+        font-size: 12pt;
+        margin-bottom: 8px;
+    }
+
+    .checklist-section label {
+        display: block;
+        padding: 3px 0;
+        font-size: 10pt;
+    }
+
+    .checklist-section label::before {
+        content: "☐ ";
+        font-size: 12pt;
+        margin-right: 5px;
+    }
+
+    /* Alojamientos para impresión */
+    .accommodation-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        page-break-inside: avoid;
+    }
+
+    .accommodation-card {
+        border: 1px solid #ddd;
+        padding: 8px;
+        font-size: 9pt;
+    }
+
+    /* Transporte para impresión */
+    .transport-info {
+        page-break-inside: avoid;
+    }
+
+    .transport-item {
+        border-bottom: 1px solid #ddd;
+        padding: 5px 0;
+        font-size: 10pt;
+    }
+
+    /* Sidebar elements */
+    .city-selector,
+    .legend {
+        display: none !important;
+    }
+
+    /* Mostrar información importante */
+    .transport-info {
+        display: block !important;
+        page-break-inside: avoid;
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .transport-info h4 {
+        color: #667eea !important;
+        font-size: 14pt;
+        margin-bottom: 10px;
+    }
+
+    /* Saltos de página */
+    h3, h4 {
+        page-break-after: avoid;
+    }
+
+    .accommodation-info,
+    .gastronomy-content,
+    .budget-content,
+    .tips-content,
+    .checklist-content {
+        page-break-before: always;
+    }
+
+    /* URLs visibles en impresión */
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 8pt;
+        color: #666;
+    }
+
+    /* Numeración de páginas */
+    @page {
+        margin: 1.5cm;
+        @bottom-right {
+            content: "Página " counter(page) " de " counter(pages);
+        }
+    }
+
+    /* Título en cada página */
+    @page :left {
+        @top-left {
+            content: "Itinerario Europa 2025";
+            font-size: 9pt;
+            color: #667eea;
+        }
+    }
+
+    @page :right {
+        @top-right {
+            content: "CDMX → Europa";
+            font-size: 9pt;
+            color: #667eea;
+        }
+    }
+
+    /* Primera página especial */
+    @page :first {
+        margin-top: 0;
+    }
+}
